@@ -6,7 +6,6 @@ import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
@@ -30,11 +29,12 @@ public class OpenExchangeRatesService implements ExchangeRatesService {
     
     @Override
     public BigDecimal getHistoricalExchangesRate(String from, String to, LocalDate date) throws UnirestException {
-    	System.out.println("appId: " + appId);
-        String formatedDate = dateTimeFormatter.format(date);
+        String formattedDate = dateTimeFormatter.format(date);
+        System.out.println("appId: " + appId + " formattedDate: " + formattedDate);
         HttpResponse<JsonNode> response = Unirest.get(apiBasePath.concat(historicalRoutePath))
-            .routeParam("date", formatedDate)
+            .routeParam("date", formattedDate)
             .queryString("symbol", to).asJson();
+        System.out.println("done done");
         return response.getBody().getObject().getJSONObject("rates").getBigDecimal(to);
     }
 
