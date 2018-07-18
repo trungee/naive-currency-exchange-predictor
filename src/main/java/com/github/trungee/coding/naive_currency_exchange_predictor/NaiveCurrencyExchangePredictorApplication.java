@@ -27,7 +27,8 @@ public class NaiveCurrencyExchangePredictorApplication implements CommandLineRun
         String exchangeTo = args[1].substring(args[1].length() - 3, args[1].length());
         List<Sample> samples = sampleCollector.collect(exchangeFrom, exchangeTo);
         Predictor predictor = new Predictor(samples);
-        predictor.predict();
+        int JANUARY = 1;
+        System.out.println("predict: " + predictor.predict(JANUARY));
     }
 
 }

@@ -5,8 +5,8 @@ import java.time.LocalDate;
 
 public class Sample {
 
-    LocalDate date;
-    BigDecimal exchangeRate;
+    private LocalDate date;
+    private BigDecimal exchangeRate;
 
     public Sample(LocalDate date, BigDecimal exchangeRate) {
         this.date = date;

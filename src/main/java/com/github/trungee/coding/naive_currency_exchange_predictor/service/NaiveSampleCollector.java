@@ -39,8 +39,8 @@ public class NaiveSampleCollector implements SampleCollector{
             }
         }
         for (Future<Sample> future : futures) {
-            samples.add(future.get()); // get will block until the future
-                                             // is done
+            // get will block until the future is done
+            samples.add(future.get()); 
         }
         executorService.shutdown();
         return samples;
