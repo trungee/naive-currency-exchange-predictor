@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,13 +18,15 @@ import com.github.trungee.coding.naive_currency_exchange_predictor.validator.Arg
 public class NaiveCurrencyExchangePredictorApplication implements CommandLineRunner {
 
     @Autowired
-    SampleCollector sampleCollector;
+    private SampleCollector sampleCollector;
     
     @Autowired
-    ArgumentValidator argumentValidatior;
+    private ArgumentValidator argumentValidatior;
+    
+    @Value("${app.month_of_predict}")
+    private int monthOfPredict;
     
     private static final String OUTPUT_PATTERN = "The predicted currency exchange from %s to %s for 15/%d/2017 is %f.";
-    private static final int PREDICT_MONTH_JANUARY = 1;
     
     public static void main(String[] args) {
         SpringApplication.run(NaiveCurrencyExchangePredictorApplication.class, args);
@@ -37,8 +40,8 @@ public class NaiveCurrencyExchangePredictorApplication implements CommandLineRun
             List<Sample> samples = sampleCollector.collect(exchangeFrom, exchangeTo);
             Predictor predictor = new Predictor(samples);
             try {
-                BigDecimal predictedExchangeRate = predictor.predict(PREDICT_MONTH_JANUARY);
-                System.out.println(String.format(OUTPUT_PATTERN, exchangeFrom, exchangeTo, PREDICT_MONTH_JANUARY, predictedExchangeRate.doubleValue()));
+                BigDecimal predictedExchangeRate = predictor.predict(monthOfPredict);
+                System.out.println(String.format(OUTPUT_PATTERN, exchangeFrom, exchangeTo, monthOfPredict, predictedExchangeRate.doubleValue()));
             } catch (Exception e) {
                 System.err.println(e);
             }

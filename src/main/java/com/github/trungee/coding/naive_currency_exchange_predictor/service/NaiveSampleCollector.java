@@ -9,12 +9,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.github.trungee.coding.naive_currency_exchange_predictor.core.Sample;
 import com.github.trungee.coding.naive_currency_exchange_predictor.task.GetExcangeRateTask;
 
-@Component
+@Service
 public class NaiveSampleCollector implements SampleCollector{
 
     private static final int DEAULT_SAMPLE_DATE = 15;
@@ -43,6 +43,7 @@ public class NaiveSampleCollector implements SampleCollector{
                 e.printStackTrace();
             }
         }
+        System.out.println(String.format("Collecting samples for %d months...", NUMBER_OF_MONTH));
         int numberOfFailedSamples = 0;
         for (Future<Sample> future : futures) {
             // get will block until the future is done
