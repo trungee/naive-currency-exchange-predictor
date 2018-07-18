@@ -15,7 +15,7 @@ import com.github.trungee.coding.naive_currency_exchange_predictor.core.Sample;
 import com.github.trungee.coding.naive_currency_exchange_predictor.task.GetExcangeRateTask;
 
 @Component
-public class NaiveSampleCollector {
+public class NaiveSampleCollector implements SampleCollector{
 
     private ExchangeRatesService exchangeRatesService;
 
@@ -23,6 +23,7 @@ public class NaiveSampleCollector {
         this.exchangeRatesService = exchangeRatesService;
     }
 
+    @Override
     public List<Sample> collect(String exchangeFrom, String exchangeTo) throws InterruptedException, ExecutionException {
         List<Sample> samples = new ArrayList<>();
         ExecutorService executorService = Executors.newFixedThreadPool(6);
