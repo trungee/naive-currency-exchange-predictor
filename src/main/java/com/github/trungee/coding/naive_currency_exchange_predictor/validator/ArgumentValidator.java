@@ -11,10 +11,8 @@ public class ArgumentValidator {
     
     public boolean validate(String... args) {
         boolean isValid = false;
-        if (args != null && args.length >= 2) {
-            if (validateArgument(args[0]) && validateArgument(args[1])) {
-                isValid = true;
-            }
+        if (args.length >= 2 && validateArgument(args[0]) && validateArgument(args[1])) {
+            isValid = true;
         }
         if (!isValid) {
             throw new IllegalArgumentException("Invalid arguments. Please input argument follow pattern: from={currency} to={currency}");

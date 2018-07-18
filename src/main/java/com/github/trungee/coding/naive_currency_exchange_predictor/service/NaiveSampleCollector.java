@@ -53,9 +53,15 @@ public class NaiveSampleCollector implements SampleCollector{
                 numberOfFailedSamples++;
             }
         }
-        System.err.println(String.format("There are %d failed sample(s) can't be collected.", numberOfFailedSamples));
+        if (isThereFailedSample(numberOfFailedSamples)) {
+            System.err.println(String.format("There are %d failed sample(s) can't be collected.", numberOfFailedSamples));
+        }
         executorService.shutdown();
         return samples;
+    }
+
+    private boolean isThereFailedSample(int numberOfFailedSamples) {
+        return numberOfFailedSamples > 0;
     }
 
     public LocalDate getSampleDate(int month) {
