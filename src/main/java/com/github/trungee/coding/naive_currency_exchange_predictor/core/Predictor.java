@@ -9,6 +9,8 @@ public class Predictor {
     private List<Sample> sampleRates;
     private long sigmaX;
     private BigDecimal slopeB;
+    private static final RoundingMode ROUNDING_MODE = RoundingMode.HALF_DOWN;
+    private static final int PRECISION_SCALE = 5;
 
     public Predictor(List<Sample> sampleRates) {
         this.sampleRates = sampleRates;
@@ -80,7 +82,7 @@ public class Predictor {
     private BigDecimal findSlopeB() {
         if (slopeB == null) { 
             BigDecimal upper = findNSigmaXY().subtract(new BigDecimal(findSigmaX()).multiply(findSigmaY()));
-            slopeB = upper.divide(findNSigmaXSquare().subtract(findSquareOfSigmaX()), 5, RoundingMode.HALF_DOWN);
+            slopeB = upper.divide(findNSigmaXSquare().subtract(findSquareOfSigmaX()), PRECISION_SCALE, ROUNDING_MODE);
         } 
         return slopeB;
     }
@@ -89,7 +91,7 @@ public class Predictor {
      * Intercept(a) = (ΣY - b(ΣX)) / N 
      */
     private BigDecimal fidnInterceptA() {
-        return findSigmaY().subtract(findSlopeB().multiply(new BigDecimal(findSigmaX()))).divide(new BigDecimal(findN()), 5, RoundingMode.HALF_DOWN);
+        return findSigmaY().subtract(findSlopeB().multiply(new BigDecimal(findSigmaX()))).divide(new BigDecimal(findN()), 5, ROUNDING_MODE);
     }
     
     private BigDecimal findRegressionEquationY(int x) {
