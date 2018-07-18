@@ -1,5 +1,6 @@
 package com.github.trungee.coding.naive_currency_exchange_predictor;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,9 @@ public class NaiveCurrencyExchangePredictorApplication implements CommandLineRun
     @Autowired
     SampleCollector sampleCollector;
 
+    private static final String OUTPUT_PATTERN = "The predicted currency exchange from %s to %s for 15/%d/2017 is %s.";
+    private static final int PREDICT_MONTH_JANUARY = 1;
+    
     public static void main(String[] args) {
         SpringApplication.run(NaiveCurrencyExchangePredictorApplication.class, args);
     }
@@ -27,8 +31,8 @@ public class NaiveCurrencyExchangePredictorApplication implements CommandLineRun
         String exchangeTo = args[1].substring(args[1].length() - 3, args[1].length());
         List<Sample> samples = sampleCollector.collect(exchangeFrom, exchangeTo);
         Predictor predictor = new Predictor(samples);
-        int JANUARY = 1;
-        System.out.println("predict: " + predictor.predict(JANUARY));
+        BigDecimal predictedExchangeRate = predictor.predict(PREDICT_MONTH_JANUARY);
+        System.out.println(String.format(OUTPUT_PATTERN, exchangeFrom, exchangeTo, PREDICT_MONTH_JANUARY, predictedExchangeRate));
     }
 
 }

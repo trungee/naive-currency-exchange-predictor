@@ -89,7 +89,7 @@ public class Predictor {
      * Intercept(a) = (ΣY - b(ΣX)) / N 
      */
     private BigDecimal fidnInterceptA() {
-        return findSlopeB().multiply(new BigDecimal(findSigmaX())).divide(new BigDecimal(findN()));
+        return findSigmaY().subtract(findSlopeB().multiply(new BigDecimal(findSigmaX()))).divide(new BigDecimal(findN()), 5, RoundingMode.HALF_DOWN);
     }
     
     private BigDecimal findRegressionEquationY(int x) {
