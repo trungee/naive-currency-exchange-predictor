@@ -17,6 +17,11 @@ import com.github.trungee.coding.naive_currency_exchange_predictor.task.GetExcan
 @Component
 public class NaiveSampleCollector implements SampleCollector{
 
+    private static final int DEAULT_SAMPLE_DATE = 15;
+    private static final int DEFAULT_SAMPLE_YEAR = 2016;
+    private static final int MONTH_START = 1;
+    private static final int NUMBER_OF_MONTH = 12;
+    private static final int NUMBER_OF_THREAD = 6;
     private ExchangeRatesService exchangeRatesService;
 
     public NaiveSampleCollector(@Autowired ExchangeRatesService exchangeRatesService) {
@@ -24,11 +29,11 @@ public class NaiveSampleCollector implements SampleCollector{
     }
 
     @Override
-    public List<Sample> collect(String exchangeFrom, String exchangeTo) throws InterruptedException, ExecutionException {
+    public List<Sample> collect(String exchangeFrom, String exchangeTo) {
         List<Sample> samples = new ArrayList<>();
-        ExecutorService executorService = Executors.newFixedThreadPool(6);
-        List<Future<Sample>> futures = new ArrayList<Future<Sample>>(12);
-        for (int month = 1; month <= 12; month++) {
+        ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_THREAD);
+        List<Future<Sample>> futures = new ArrayList<Future<Sample>>(NUMBER_OF_MONTH);
+        for (int month = MONTH_START; month <= NUMBER_OF_MONTH; month++) {
             LocalDate date = getSampleDate(month);
             try {
                 Future<Sample> future = executorService
@@ -38,15 +43,22 @@ public class NaiveSampleCollector implements SampleCollector{
                 e.printStackTrace();
             }
         }
+        int numberOfFailedSamples = 0;
         for (Future<Sample> future : futures) {
             // get will block until the future is done
-            samples.add(future.get()); 
+            try {
+                samples.add(future.get());
+            } catch (InterruptedException | ExecutionException e) {
+                System.out.println(e.getMessage());
+                numberOfFailedSamples++;
+            }
         }
+        System.err.println(String.format("There are %d failed sample(s) can't be collected.", numberOfFailedSamples));
         executorService.shutdown();
         return samples;
     }
 
     public LocalDate getSampleDate(int month) {
-        return LocalDate.of(2016, month, 15);
+        return LocalDate.of(DEFAULT_SAMPLE_YEAR, month, DEAULT_SAMPLE_DATE);
     }
 }

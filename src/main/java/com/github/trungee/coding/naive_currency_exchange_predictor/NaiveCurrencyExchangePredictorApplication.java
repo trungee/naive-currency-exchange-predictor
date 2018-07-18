@@ -18,7 +18,7 @@ public class NaiveCurrencyExchangePredictorApplication implements CommandLineRun
     @Autowired
     SampleCollector sampleCollector;
 
-    private static final String OUTPUT_PATTERN = "The predicted currency exchange from %s to %s for 15/%d/2017 is %s.";
+    private static final String OUTPUT_PATTERN = "The predicted currency exchange from %s to %s for 15/%d/2017 is %f.";
     private static final int PREDICT_MONTH_JANUARY = 1;
     
     public static void main(String[] args) {
@@ -31,8 +31,12 @@ public class NaiveCurrencyExchangePredictorApplication implements CommandLineRun
         String exchangeTo = args[1].substring(args[1].length() - 3, args[1].length());
         List<Sample> samples = sampleCollector.collect(exchangeFrom, exchangeTo);
         Predictor predictor = new Predictor(samples);
-        BigDecimal predictedExchangeRate = predictor.predict(PREDICT_MONTH_JANUARY);
-        System.out.println(String.format(OUTPUT_PATTERN, exchangeFrom, exchangeTo, PREDICT_MONTH_JANUARY, predictedExchangeRate));
+        try {
+            BigDecimal predictedExchangeRate = predictor.predict(PREDICT_MONTH_JANUARY);
+            System.out.println(String.format(OUTPUT_PATTERN, exchangeFrom, exchangeTo, PREDICT_MONTH_JANUARY, predictedExchangeRate.doubleValue()));
+        } catch (Exception e) {
+            System.err.println(e);
+        }
     }
 
 }

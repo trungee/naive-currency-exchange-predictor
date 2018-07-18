@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -31,10 +32,16 @@ public class OpenExchangeRatesService implements ExchangeRatesService {
     @Override
     public Sample getHistoricalExchangesRate(String from, String to, LocalDate date) throws UnirestException {
         String formatedDate = dateTimeFormatter.format(date);
+        Sample sample = null;
         HttpResponse<JsonNode> response = Unirest.get(apiBasePath.concat(historicalRoutePath)).routeParam("date", formatedDate)
                 .queryString("symbols", to).queryString("app_id", appId).asJson();
-        BigDecimal exchangeRate = response.getBody().getObject().getJSONObject("rates").getBigDecimal(to);
-        return new Sample(date, exchangeRate);
+        if (response.getStatus() == HttpStatus.SC_OK) {
+            BigDecimal exchangeRate = response.getBody().getObject().getJSONObject("rates").getBigDecimal(to);
+            sample = new Sample(date, exchangeRate);
+        } else {
+            throw new UnirestException(String.format("Failed to get exchage rates. Status code: %d, status text: %s", response.getStatus(), response.getStatusText()));
+        }
+        return sample;
     }
 
 }

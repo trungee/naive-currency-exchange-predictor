@@ -10,20 +10,29 @@ public class Predictor {
     private long sigmaX;
     private BigDecimal slopeB;
     private static final RoundingMode ROUNDING_MODE = RoundingMode.HALF_DOWN;
-    private static final int PRECISION_SCALE = 5;
+    private static final int PRECISION_SCALE = 6;
 
     public Predictor(List<Sample> sampleRates) {
         this.sampleRates = sampleRates;
     }
 
-    public BigDecimal predict(int x) {
-        return findRegressionEquationY(x);
+    public BigDecimal predict(int x) throws IllegalStateException{
+        BigDecimal predictedRate = null;
+        if (!sampleRates.isEmpty()) {
+            predictedRate = findRegressionEquationY(x);
+        } else {
+            throw new IllegalStateException("Can not predict with no sample data.");
+        }
+        return predictedRate;
     }
     
     private long findN() {
         return sampleRates.size();
     }
     
+    /**
+     * ΣX
+     */
     private long findSigmaX() {
         if (sigmaX == 0) {
             sigmaX = sampleRates.stream()
@@ -33,6 +42,9 @@ public class Predictor {
         return sigmaX;
     }
     
+    /**
+     * ΣY
+     */
     private BigDecimal findSigmaY() {
         BigDecimal sum = BigDecimal.ZERO;
         for (Sample sample : sampleRates) {
@@ -41,6 +53,9 @@ public class Predictor {
         return sum;
     }
     
+    /**
+     * ΣXY 
+     */
     private BigDecimal findSigmaXY() {
         BigDecimal sum = BigDecimal.ZERO;
         for (Sample sample : sampleRates) {
@@ -49,6 +64,9 @@ public class Predictor {
         return sum;
     }
     
+    /**
+     * ΣX^2
+     */
     private BigDecimal findSigmaXsquare() {
         BigDecimal sum = BigDecimal.ZERO;
         for (Sample sample : sampleRates) {
@@ -57,6 +75,9 @@ public class Predictor {
         return sum;
     }
     
+    /**
+     * NΣXY
+     */
     private BigDecimal findNSigmaXY() {
         return new BigDecimal(findN()).multiply(findSigmaXY()); 
     }
@@ -91,9 +112,12 @@ public class Predictor {
      * Intercept(a) = (ΣY - b(ΣX)) / N 
      */
     private BigDecimal fidnInterceptA() {
-        return findSigmaY().subtract(findSlopeB().multiply(new BigDecimal(findSigmaX()))).divide(new BigDecimal(findN()), 5, ROUNDING_MODE);
+        return findSigmaY().subtract(findSlopeB().multiply(new BigDecimal(findSigmaX()))).divide(new BigDecimal(findN()), PRECISION_SCALE, ROUNDING_MODE);
     }
     
+    /**
+     * Regression Equation(y) = a + bx  
+     */
     private BigDecimal findRegressionEquationY(int x) {
         return fidnInterceptA().add(findSlopeB().multiply(new BigDecimal(x)));
     }
