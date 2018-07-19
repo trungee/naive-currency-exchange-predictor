@@ -34,7 +34,9 @@ public class OpenExchangeRatesService implements ExchangeRatesService {
         String formatedDate = dateTimeFormatter.format(date);
         Sample sample = null;
         HttpResponse<JsonNode> response = Unirest.get(apiBasePath.concat(historicalRoutePath)).routeParam("date", formatedDate)
-                .queryString("symbols", to).queryString("app_id", appId).asJson();
+                .queryString("base", from)
+                .queryString("symbols", to)
+                .queryString("app_id", appId).asJson();
         if (response.getStatus() == HttpStatus.SC_OK) {
             BigDecimal exchangeRate = response.getBody().getObject().getJSONObject("rates").getBigDecimal(to);
             sample = new Sample(date, exchangeRate);

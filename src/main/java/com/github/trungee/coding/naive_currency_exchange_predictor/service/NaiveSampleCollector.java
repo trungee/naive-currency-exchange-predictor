@@ -50,6 +50,7 @@ public class NaiveSampleCollector implements SampleCollector{
             // get will block until the future is done
             try {
                 samples.add(future.get());
+                System.out.println(future.get()); 
             } catch (InterruptedException | ExecutionException e) {
                 System.out.println(e.getMessage());
                 numberOfFailedSamples++;
