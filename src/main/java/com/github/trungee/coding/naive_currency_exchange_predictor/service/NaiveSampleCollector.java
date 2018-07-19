@@ -20,7 +20,7 @@ public class NaiveSampleCollector implements SampleCollector{
     private static final int DEAULT_SAMPLE_DATE = 15;
     private static final int DEFAULT_SAMPLE_YEAR = 2016;
     private static final int MONTH_START = 1;
-    private static final int NUMBER_OF_MONTH = 12;
+    private static final int MONTH_END = 12;
     private static final int NUMBER_OF_THREAD = 6;
     private ExchangeRatesService exchangeRatesService;
 
@@ -32,8 +32,9 @@ public class NaiveSampleCollector implements SampleCollector{
     public List<Sample> collect(String exchangeFrom, String exchangeTo) {
         List<Sample> samples = new ArrayList<>();
         ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_THREAD);
-        List<Future<Sample>> futures = new ArrayList<Future<Sample>>(NUMBER_OF_MONTH);
-        for (int month = MONTH_START; month <= NUMBER_OF_MONTH; month++) {
+        int numberOfMonths = MONTH_END - MONTH_START + 1;
+        List<Future<Sample>> futures = new ArrayList<Future<Sample>>(numberOfMonths);
+        for (int month = MONTH_START; month <= MONTH_END; month++) {
             LocalDate date = getSampleDate(month);
             try {
                 Future<Sample> future = executorService
@@ -43,7 +44,7 @@ public class NaiveSampleCollector implements SampleCollector{
                 e.printStackTrace();
             }
         }
-        System.out.println(String.format("Collecting samples for %d months...", NUMBER_OF_MONTH));
+        System.out.println(String.format("Collecting samples for %d months...", numberOfMonths));
         int numberOfFailedSamples = 0;
         for (Future<Sample> future : futures) {
             // get will block until the future is done

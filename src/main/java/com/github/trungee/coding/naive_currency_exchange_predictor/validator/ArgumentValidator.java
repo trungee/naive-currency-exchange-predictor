@@ -15,12 +15,18 @@ public class ArgumentValidator {
             isValid = true;
         }
         if (!isValid) {
-            throw new IllegalArgumentException("Invalid arguments. Please input argument follow pattern: from={currency} to={currency}");
+            StringBuilder builder = new StringBuilder();
+            for (String arg : args) {
+                builder.append(arg).append(',');
+            }
+            
+            throw new IllegalArgumentException(String.format("Invalid arguments %s. Please input argument follow pattern: from={currency} to={currency}", builder.toString()));
         }
         return isValid;
     }
     
     private boolean validateArgument(String argument) {
+        System.out.println("arg: " + argument);
         return PATTERN.matcher(argument).matches();
     }
 }

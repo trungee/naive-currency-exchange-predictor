@@ -1,6 +1,7 @@
 package com.github.trungee.coding.naive_currency_exchange_predictor;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ import com.github.trungee.coding.naive_currency_exchange_predictor.validator.Arg
 @SpringBootApplication
 public class NaiveCurrencyExchangePredictorApplication implements CommandLineRunner {
 
+    private static final String DECIMAL_PATTERN = "###,###.#######";
+
     @Autowired
     private SampleCollector sampleCollector;
     
@@ -26,7 +29,10 @@ public class NaiveCurrencyExchangePredictorApplication implements CommandLineRun
     @Value("${app.month_of_predict}")
     private int monthOfPredict;
     
-    private static final String OUTPUT_PATTERN = "The predicted currency exchange from %s to %s for 15/%d/2017 is %f.";
+    @Value("${app.default_args:}")
+    private String defaultArgs;
+    
+    private static final String OUTPUT_PATTERN = "The predicted currency exchange from %s to %s for 15/%d/2017 is %s.";
     
     public static void main(String[] args) {
         SpringApplication.run(NaiveCurrencyExchangePredictorApplication.class, args);
@@ -34,6 +40,7 @@ public class NaiveCurrencyExchangePredictorApplication implements CommandLineRun
 
     @Override
     public void run(String... args) throws Exception {
+        args = getDefaultIfEmpty(args);
         if (argumentValidatior.validate(args)) {
             String exchangeFrom = args[0].substring(args[0].length() - 3, args[0].length());
             String exchangeTo = args[1].substring(args[1].length() - 3, args[1].length());
@@ -41,11 +48,20 @@ public class NaiveCurrencyExchangePredictorApplication implements CommandLineRun
             Predictor predictor = new Predictor(samples);
             try {
                 BigDecimal predictedExchangeRate = predictor.predict(monthOfPredict);
-                System.out.println(String.format(OUTPUT_PATTERN, exchangeFrom, exchangeTo, monthOfPredict, predictedExchangeRate.doubleValue()));
+                System.out.println(String.format(OUTPUT_PATTERN, exchangeFrom, exchangeTo, monthOfPredict, new DecimalFormat(DECIMAL_PATTERN).format(predictedExchangeRate)));
             } catch (Exception e) {
                 System.err.println(e);
             }
         }
     }
+
+    private String[] getDefaultIfEmpty(String... args) {
+        if (args.length == 0) {
+            args = defaultArgs.split(":");
+        }
+        return args;
+    }
+
+   
 
 }
