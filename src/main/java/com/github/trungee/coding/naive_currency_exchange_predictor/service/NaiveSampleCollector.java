@@ -1,6 +1,7 @@
 package com.github.trungee.coding.naive_currency_exchange_predictor.service;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -19,8 +20,8 @@ public class NaiveSampleCollector implements SampleCollector{
 
     private static final int DEAULT_SAMPLE_DATE = 15;
     private static final int DEFAULT_SAMPLE_YEAR = 2016;
-    private static final int MONTH_START = 1;
-    private static final int MONTH_END = 12;
+    private static final int MONTH_START = Month.JANUARY.getValue();
+    private static final int MONTH_END = Month.DECEMBER.getValue();
     private static final int NUMBER_OF_THREAD = 6;
     private ExchangeRatesService exchangeRatesService;
 
