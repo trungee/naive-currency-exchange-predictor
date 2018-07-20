@@ -11,8 +11,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 
-
-
 public class PredictorTest {
 
     private Predictor predictor;
@@ -62,8 +60,11 @@ public class PredictorTest {
         samples.add(new Sample(getSampleDate(11), new BigDecimal(EXCHANGE_RATE_USD_TO_VND)));
         samples.add(new Sample(getSampleDate(12), new BigDecimal(EXCHANGE_RATE_USD_TO_VND)));
         predictor = new Predictor(samples);
-        assertThat(0, equalTo(new BigDecimal("23.7899").compareTo(predictor.predict(Month.JANUARY.getValue()))));
-        assertThat(0, equalTo(new BigDecimal("23.7899").compareTo(predictor.predict(Month.JUNE.getValue()))));
-        assertThat(0, equalTo(new BigDecimal("23.7899").compareTo(predictor.predict(Month.SEPTEMBER.getValue()))));
+        assertThat(new BigDecimal("23.7899").compareTo(predictor.predict(Month.JANUARY.getValue())), equalTo(0));
+        assertThat(new BigDecimal("23.7899").compareTo(predictor.predict(Month.MARCH.getValue())), equalTo(0));
+        assertThat(new BigDecimal("23.7899").compareTo(predictor.predict(Month.APRIL.getValue())), equalTo(0));
+        assertThat(new BigDecimal("23.7899").compareTo(predictor.predict(Month.AUGUST.getValue())), equalTo(0));
+        assertThat(new BigDecimal("23.7899").compareTo(predictor.predict(Month.NOVEMBER.getValue())), equalTo(0));
+        assertThat(new BigDecimal("23.7899").compareTo(predictor.predict(Month.SEPTEMBER.getValue())), equalTo(0));
     }
 }

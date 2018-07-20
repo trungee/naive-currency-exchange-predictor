@@ -10,6 +10,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.github.trungee.coding.naive_currency_exchange_predictor.core.Sample;
@@ -25,7 +26,7 @@ public class NaiveSampleCollector implements SampleCollector{
     private static final int NUMBER_OF_THREAD = 6;
     private ExchangeRatesService exchangeRatesService;
 
-    public NaiveSampleCollector(@Autowired ExchangeRatesService exchangeRatesService) {
+    public NaiveSampleCollector(@Autowired @Qualifier("openExchangeRatesService") ExchangeRatesService exchangeRatesService) {
         this.exchangeRatesService = exchangeRatesService;
     }
 
